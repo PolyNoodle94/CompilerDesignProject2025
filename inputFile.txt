@@ -1,0 +1,43 @@
+program
+   var SMALLER as int ;
+   var BIGGER as int ;
+   var TEMP as int ;
+   var BJ as bool ;
+begin
+   BIGGER := readInt ;
+   SMALLER := readInt ;
+   BIGGER := BIGGER + 1 ;
+   BIGGER := BIGGER - 1 ;
+   BIGGER := BIGGER * SMALLER ;
+   BIGGER := BIGGER div SMALLER ;
+   BIGGER := BIGGER mod SMALLER ;
+   if ( SMALLER > BIGGER + ( 3 + 2 ) ) = true then
+      TEMP := SMALLER ;
+      TEMP1 := 23012 ;
+      SMALLER := BIGGER ;
+      BIGGER := TEMP ;
+      if 3 > 4 then
+         TEMP := 4 ;
+      else
+         TEMP := 3 ;
+      end ;
+   else
+      TEMP := BIGGER ;
+      TEMP1 := 314159 ;
+   end ;
+
+   while SMALLER > 0 do
+      BIGGER := BIGGER * SMALLER ;
+
+      BJ := false ;
+      BJ := true ;
+
+      if ( SMALLER > BIGGER ) > 3 then
+         TEMP := SMALLER ;
+         SMALLER := BIGGER ;
+         BIGGER := TEMP ;
+      end ;
+   end ;
+   writeInt BIGGER ;
+end
+

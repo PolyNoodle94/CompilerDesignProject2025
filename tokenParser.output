@@ -1,0 +1,655 @@
+Grammar
+
+    0 $accept: Program $end
+
+    1 Program: PROGRAM Declarations BEGINKEY StatementSequence END
+
+    2 Declarations: %empty
+    3             | VAR IDENTIFIER AS Type SC Declarations
+
+    4 Type: INT
+    5     | BOOL
+
+    6 StatementSequence: %empty
+    7                  | Statement SC StatementSequence
+
+    8 Statement: Assignment
+    9          | IfStatement
+   10          | WhileStatement
+   11          | WriteInt
+
+   12 Assignment: IDENTIFIER ASGN Expression
+   13           | IDENTIFIER ASGN READINT
+
+   14 IfStatement: IF Expression THEN StatementSequence ElseClause END
+
+   15 ElseClause: %empty
+   16           | ELSE StatementSequence
+
+   17 WhileStatement: WHILE Expression DO StatementSequence END
+
+   18 WriteInt: WRITEINT Expression
+
+   19 Expression: SimpleExpression
+   20           | SimpleExpression OP4 SimpleExpression
+
+   21 SimpleExpression: Term
+   22                 | Term OP3 Term
+
+   23 Term: Factor
+   24     | Factor OP2 Factor
+
+   25 Factor: IDENTIFIER
+   26       | NUM
+   27       | BOOLLIT
+   28       | LP Expression RP
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+LP (258) 28
+RP (259) 28
+ASGN (260) 12 13
+SC (261) 3 7
+OP2 (262) 24
+OP3 (263) 22
+OP4 (264) 20
+IF (265) 14
+THEN (266) 14
+ELSE (267) 16
+BEGINKEY (268) 1
+END (269) 1 14 17
+WHILE (270) 17
+DO (271) 17
+PROGRAM (272) 1
+VAR (273) 3
+AS (274) 3
+INT (275) 4
+BOOL (276) 5
+WRITEINT (277) 18
+READINT (278) 13
+IDENTIFIER (279) 3 12 13 25
+NUM (280) 26
+BOOLLIT (281) 27
+
+
+Nonterminals, with rules where they appear
+
+$accept (27)
+    on left: 0
+Program (28)
+    on left: 1, on right: 0
+Declarations (29)
+    on left: 2 3, on right: 1 3
+Type (30)
+    on left: 4 5, on right: 3
+StatementSequence (31)
+    on left: 6 7, on right: 1 7 14 16 17
+Statement (32)
+    on left: 8 9 10 11, on right: 7
+Assignment (33)
+    on left: 12 13, on right: 8
+IfStatement (34)
+    on left: 14, on right: 9
+ElseClause (35)
+    on left: 15 16, on right: 14
+WhileStatement (36)
+    on left: 17, on right: 10
+WriteInt (37)
+    on left: 18, on right: 11
+Expression (38)
+    on left: 19 20, on right: 12 14 17 18 28
+SimpleExpression (39)
+    on left: 21 22, on right: 19 20
+Term (40)
+    on left: 23 24, on right: 21 22
+Factor (41)
+    on left: 25 26 27 28, on right: 23 24
+
+
+State 0
+
+    0 $accept: . Program $end
+
+    PROGRAM  shift, and go to state 1
+
+    Program  go to state 2
+
+
+State 1
+
+    1 Program: PROGRAM . Declarations BEGINKEY StatementSequence END
+
+    VAR  shift, and go to state 3
+
+    $default  reduce using rule 2 (Declarations)
+
+    Declarations  go to state 4
+
+
+State 2
+
+    0 $accept: Program . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    3 Declarations: VAR . IDENTIFIER AS Type SC Declarations
+
+    IDENTIFIER  shift, and go to state 6
+
+
+State 4
+
+    1 Program: PROGRAM Declarations . BEGINKEY StatementSequence END
+
+    BEGINKEY  shift, and go to state 7
+
+
+State 5
+
+    0 $accept: Program $end .
+
+    $default  accept
+
+
+State 6
+
+    3 Declarations: VAR IDENTIFIER . AS Type SC Declarations
+
+    AS  shift, and go to state 8
+
+
+State 7
+
+    1 Program: PROGRAM Declarations BEGINKEY . StatementSequence END
+
+    IF          shift, and go to state 9
+    WHILE       shift, and go to state 10
+    WRITEINT    shift, and go to state 11
+    IDENTIFIER  shift, and go to state 12
+
+    $default  reduce using rule 6 (StatementSequence)
+
+    StatementSequence  go to state 13
+    Statement          go to state 14
+    Assignment         go to state 15
+    IfStatement        go to state 16
+    WhileStatement     go to state 17
+    WriteInt           go to state 18
+
+
+State 8
+
+    3 Declarations: VAR IDENTIFIER AS . Type SC Declarations
+
+    INT   shift, and go to state 19
+    BOOL  shift, and go to state 20
+
+    Type  go to state 21
+
+
+State 9
+
+   14 IfStatement: IF . Expression THEN StatementSequence ElseClause END
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Expression        go to state 26
+    SimpleExpression  go to state 27
+    Term              go to state 28
+    Factor            go to state 29
+
+
+State 10
+
+   17 WhileStatement: WHILE . Expression DO StatementSequence END
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Expression        go to state 30
+    SimpleExpression  go to state 27
+    Term              go to state 28
+    Factor            go to state 29
+
+
+State 11
+
+   18 WriteInt: WRITEINT . Expression
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Expression        go to state 31
+    SimpleExpression  go to state 27
+    Term              go to state 28
+    Factor            go to state 29
+
+
+State 12
+
+   12 Assignment: IDENTIFIER . ASGN Expression
+   13           | IDENTIFIER . ASGN READINT
+
+    ASGN  shift, and go to state 32
+
+
+State 13
+
+    1 Program: PROGRAM Declarations BEGINKEY StatementSequence . END
+
+    END  shift, and go to state 33
+
+
+State 14
+
+    7 StatementSequence: Statement . SC StatementSequence
+
+    SC  shift, and go to state 34
+
+
+State 15
+
+    8 Statement: Assignment .
+
+    $default  reduce using rule 8 (Statement)
+
+
+State 16
+
+    9 Statement: IfStatement .
+
+    $default  reduce using rule 9 (Statement)
+
+
+State 17
+
+   10 Statement: WhileStatement .
+
+    $default  reduce using rule 10 (Statement)
+
+
+State 18
+
+   11 Statement: WriteInt .
+
+    $default  reduce using rule 11 (Statement)
+
+
+State 19
+
+    4 Type: INT .
+
+    $default  reduce using rule 4 (Type)
+
+
+State 20
+
+    5 Type: BOOL .
+
+    $default  reduce using rule 5 (Type)
+
+
+State 21
+
+    3 Declarations: VAR IDENTIFIER AS Type . SC Declarations
+
+    SC  shift, and go to state 35
+
+
+State 22
+
+   28 Factor: LP . Expression RP
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Expression        go to state 36
+    SimpleExpression  go to state 27
+    Term              go to state 28
+    Factor            go to state 29
+
+
+State 23
+
+   25 Factor: IDENTIFIER .
+
+    $default  reduce using rule 25 (Factor)
+
+
+State 24
+
+   26 Factor: NUM .
+
+    $default  reduce using rule 26 (Factor)
+
+
+State 25
+
+   27 Factor: BOOLLIT .
+
+    $default  reduce using rule 27 (Factor)
+
+
+State 26
+
+   14 IfStatement: IF Expression . THEN StatementSequence ElseClause END
+
+    THEN  shift, and go to state 37
+
+
+State 27
+
+   19 Expression: SimpleExpression .
+   20           | SimpleExpression . OP4 SimpleExpression
+
+    OP4  shift, and go to state 38
+
+    $default  reduce using rule 19 (Expression)
+
+
+State 28
+
+   21 SimpleExpression: Term .
+   22                 | Term . OP3 Term
+
+    OP3  shift, and go to state 39
+
+    $default  reduce using rule 21 (SimpleExpression)
+
+
+State 29
+
+   23 Term: Factor .
+   24     | Factor . OP2 Factor
+
+    OP2  shift, and go to state 40
+
+    $default  reduce using rule 23 (Term)
+
+
+State 30
+
+   17 WhileStatement: WHILE Expression . DO StatementSequence END
+
+    DO  shift, and go to state 41
+
+
+State 31
+
+   18 WriteInt: WRITEINT Expression .
+
+    $default  reduce using rule 18 (WriteInt)
+
+
+State 32
+
+   12 Assignment: IDENTIFIER ASGN . Expression
+   13           | IDENTIFIER ASGN . READINT
+
+    LP          shift, and go to state 22
+    READINT     shift, and go to state 42
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Expression        go to state 43
+    SimpleExpression  go to state 27
+    Term              go to state 28
+    Factor            go to state 29
+
+
+State 33
+
+    1 Program: PROGRAM Declarations BEGINKEY StatementSequence END .
+
+    $default  reduce using rule 1 (Program)
+
+
+State 34
+
+    7 StatementSequence: Statement SC . StatementSequence
+
+    IF          shift, and go to state 9
+    WHILE       shift, and go to state 10
+    WRITEINT    shift, and go to state 11
+    IDENTIFIER  shift, and go to state 12
+
+    $default  reduce using rule 6 (StatementSequence)
+
+    StatementSequence  go to state 44
+    Statement          go to state 14
+    Assignment         go to state 15
+    IfStatement        go to state 16
+    WhileStatement     go to state 17
+    WriteInt           go to state 18
+
+
+State 35
+
+    3 Declarations: VAR IDENTIFIER AS Type SC . Declarations
+
+    VAR  shift, and go to state 3
+
+    $default  reduce using rule 2 (Declarations)
+
+    Declarations  go to state 45
+
+
+State 36
+
+   28 Factor: LP Expression . RP
+
+    RP  shift, and go to state 46
+
+
+State 37
+
+   14 IfStatement: IF Expression THEN . StatementSequence ElseClause END
+
+    IF          shift, and go to state 9
+    WHILE       shift, and go to state 10
+    WRITEINT    shift, and go to state 11
+    IDENTIFIER  shift, and go to state 12
+
+    $default  reduce using rule 6 (StatementSequence)
+
+    StatementSequence  go to state 47
+    Statement          go to state 14
+    Assignment         go to state 15
+    IfStatement        go to state 16
+    WhileStatement     go to state 17
+    WriteInt           go to state 18
+
+
+State 38
+
+   20 Expression: SimpleExpression OP4 . SimpleExpression
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    SimpleExpression  go to state 48
+    Term              go to state 28
+    Factor            go to state 29
+
+
+State 39
+
+   22 SimpleExpression: Term OP3 . Term
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Term    go to state 49
+    Factor  go to state 29
+
+
+State 40
+
+   24 Term: Factor OP2 . Factor
+
+    LP          shift, and go to state 22
+    IDENTIFIER  shift, and go to state 23
+    NUM         shift, and go to state 24
+    BOOLLIT     shift, and go to state 25
+
+    Factor  go to state 50
+
+
+State 41
+
+   17 WhileStatement: WHILE Expression DO . StatementSequence END
+
+    IF          shift, and go to state 9
+    WHILE       shift, and go to state 10
+    WRITEINT    shift, and go to state 11
+    IDENTIFIER  shift, and go to state 12
+
+    $default  reduce using rule 6 (StatementSequence)
+
+    StatementSequence  go to state 51
+    Statement          go to state 14
+    Assignment         go to state 15
+    IfStatement        go to state 16
+    WhileStatement     go to state 17
+    WriteInt           go to state 18
+
+
+State 42
+
+   13 Assignment: IDENTIFIER ASGN READINT .
+
+    $default  reduce using rule 13 (Assignment)
+
+
+State 43
+
+   12 Assignment: IDENTIFIER ASGN Expression .
+
+    $default  reduce using rule 12 (Assignment)
+
+
+State 44
+
+    7 StatementSequence: Statement SC StatementSequence .
+
+    $default  reduce using rule 7 (StatementSequence)
+
+
+State 45
+
+    3 Declarations: VAR IDENTIFIER AS Type SC Declarations .
+
+    $default  reduce using rule 3 (Declarations)
+
+
+State 46
+
+   28 Factor: LP Expression RP .
+
+    $default  reduce using rule 28 (Factor)
+
+
+State 47
+
+   14 IfStatement: IF Expression THEN StatementSequence . ElseClause END
+
+    ELSE  shift, and go to state 52
+
+    $default  reduce using rule 15 (ElseClause)
+
+    ElseClause  go to state 53
+
+
+State 48
+
+   20 Expression: SimpleExpression OP4 SimpleExpression .
+
+    $default  reduce using rule 20 (Expression)
+
+
+State 49
+
+   22 SimpleExpression: Term OP3 Term .
+
+    $default  reduce using rule 22 (SimpleExpression)
+
+
+State 50
+
+   24 Term: Factor OP2 Factor .
+
+    $default  reduce using rule 24 (Term)
+
+
+State 51
+
+   17 WhileStatement: WHILE Expression DO StatementSequence . END
+
+    END  shift, and go to state 54
+
+
+State 52
+
+   16 ElseClause: ELSE . StatementSequence
+
+    IF          shift, and go to state 9
+    WHILE       shift, and go to state 10
+    WRITEINT    shift, and go to state 11
+    IDENTIFIER  shift, and go to state 12
+
+    $default  reduce using rule 6 (StatementSequence)
+
+    StatementSequence  go to state 55
+    Statement          go to state 14
+    Assignment         go to state 15
+    IfStatement        go to state 16
+    WhileStatement     go to state 17
+    WriteInt           go to state 18
+
+
+State 53
+
+   14 IfStatement: IF Expression THEN StatementSequence ElseClause . END
+
+    END  shift, and go to state 56
+
+
+State 54
+
+   17 WhileStatement: WHILE Expression DO StatementSequence END .
+
+    $default  reduce using rule 17 (WhileStatement)
+
+
+State 55
+
+   16 ElseClause: ELSE StatementSequence .
+
+    $default  reduce using rule 16 (ElseClause)
+
+
+State 56
+
+   14 IfStatement: IF Expression THEN StatementSequence ElseClause END .
+
+    $default  reduce using rule 14 (IfStatement)
