@@ -1,3 +1,15 @@
+/*
+* Author: Emilio Ortiz Gonzalez
+* Date: April 16th 2025
+* Purpose: This file is used to declare all the structs
+*   needed in order for the bison file (tokenParser.y) to
+*   
+*
+*
+*/
+
+
+
 #ifndef TOKENPARSER_H
 #define TOKENPARSER_H
 

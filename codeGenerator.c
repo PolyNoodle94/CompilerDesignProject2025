@@ -70,13 +70,14 @@ void printStmtNode(STMT* node) {
         tabAmnt++;
         printWhileStmtNode(node->whileStmt);
         tabAmnt--;
-    } else {
+    } else if (node->writeIntStruct != NULL) {
         //WriteInt Expression
         printf("printf(\"");
         printf("%%d\", ");
         printExprNode(node->writeIntStruct);
         printf(");");
-        
+    } else {
+        printf("ERROR!\n");
     }
     
 }

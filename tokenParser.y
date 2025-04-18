@@ -310,7 +310,7 @@ int yyerror(char *s) {
 
 int yydebug = 0;
 
-PRGRM* generateTree() {
+int main() {
     int isFailure = yyparse();
     if (!isFailure) {
         return root;
