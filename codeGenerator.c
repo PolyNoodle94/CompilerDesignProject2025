@@ -4,6 +4,9 @@
 #include "tokenParser.tab.h"
 #include "uthash.h"
 
+
+// Declare and initialize hash table according to uthash.h standards
+SYMBOL* symbolTable = NULL;
 int tabAmnt;
 
 int main() {
@@ -14,8 +17,6 @@ int main() {
         return 1;
     } else {
         tabAmnt = 0;
-
-
         
         printProgramNode(root);
         printf("\n");
@@ -43,6 +44,23 @@ void printDeclarationsNode(DECLS* node) {
         for (int i = 0; i < tabAmnt; i++) {
             printf("\t");
         }
+
+        SYMBOL* newEntry = malloc(sizeof(SYMBOL));
+        newEntry->identifier = node->identifier;
+        newEntry->scope = INVALID_VALUE;
+        newEntry->symbolType = SYMBOL_DECLS;
+        newEntry->structPtr = node;
+
+        // HASH_ADD_KEYPTR(hh, symbolTable, newEntry->identifier, strlen(newEntry->identifier), newEntry);
+
+        // SYMBOL* foundEntry;
+        // HASH_FIND_PTR();
+
+        printf("New Entry on Symbol Table: \n");
+        printf("Identifier: %s\n", newEntry->identifier);
+        printf("Scope: %d\n", newEntry->scope);
+        printf("Symbol Type: %d\n", newEntry->symbolType);
+        printf("Struct Ptr Identifier: %s\n", ((DECLS*) newEntry->structPtr)->identifier);
         
         printf("%s %s;", node->varType ? "bool" : "int", node->identifier);
         node = node->decls;
