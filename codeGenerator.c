@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "tokenParser.h"
 #include "tokenParser.tab.h"
+#include "uthash.h"
 
 int tabAmnt;
 
@@ -13,6 +14,9 @@ int main() {
         return 1;
     } else {
         tabAmnt = 0;
+
+
+        
         printProgramNode(root);
         printf("\n");
     }

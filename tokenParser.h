@@ -14,12 +14,14 @@
 #define TOKENPARSER_H
 
 #include <stdbool.h>
+#include <uthash.h>
 
 // essentially a NULL for non-pointer types
 // not a problem since negative values aren't valid token lexeemes in the first place
 #define INVALID_VALUE -1 
 
 // typedef 
+typedef struct Symbol Symbol;
 typedef struct PRGRM PRGRM;
 typedef struct DECLS DECLS;         // DECLS refers to struct DECLS
 typedef struct STMTSEQ STMTSEQ;
@@ -75,21 +77,29 @@ OP4(4) -> <=
 OP4(5) -> >=
 */
 
+//Symbol table structs
+struct Symbol{
+    
+}
 
+// Structs for each nonterminal (where needed; for example, WriteInt does not need its own struct)
 struct PRGRM{
     DECLS * decls;
     STMTSEQ * stmtSeq;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct DECLS {
     char* identifier;
     bool varType;
     DECLS* decls;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct STMTSEQ{
     STMT* stmt;
     STMTSEQ* stmtSeq;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct STMT{
@@ -97,35 +107,41 @@ struct STMT{
     IFSTMT* ifStmt;
     WHILESTMT* whileStmt;
     EXPR*  writeIntStruct;    // <WriteInt> is really just an Expression wrapper, so i just reused the EXPR struct
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct ASGNSTRUCT {
     char* identifier;
     EXPR* expr;
     int readInt; // "read" as in "the integer has already been read. This is the read int"
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct IFSTMT {
     EXPR* expr;
     STMTSEQ* stmtSeq;
     STMTSEQ* elseClause;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct WHILESTMT {
     EXPR* expr;
     STMTSEQ* stmtSeq;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct EXPR {
     SIMPEXPR* simpleExpr1;
     int op4;
     SIMPEXPR* simpleExpr2;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 struct SIMPEXPR {
     TERM* term1;
     int op3;
     TERM* term2;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 // struct for Term
@@ -133,6 +149,7 @@ struct TERM {
     FACTOR* factor1;
     int op2;
     FACTOR* factor2;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 // struct for Factor
@@ -141,6 +158,7 @@ struct FACTOR {
     int num;
     int boolLit;
     EXPR* expr;
+    UT_hash_handle hh;  // makes this struct hashable
 };
 
 #endif //tokenParser.h
