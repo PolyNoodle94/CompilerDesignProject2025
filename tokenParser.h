@@ -1,13 +1,30 @@
+/*
+* Author: Emilio Ortiz Gonzalez
+* Date: April 16th 2025
+* Purpose: This file is used to declare all the structs
+*   needed in order for the bison file (tokenParser.y) to
+*   
+*
+*
+*/
+
+
+
 #ifndef TOKENPARSER_H
 #define TOKENPARSER_H
 
 #include <stdbool.h>
+#include "uthash.h"
 
 // essentially a NULL for non-pointer types
 // not a problem since negative values aren't valid token lexeemes in the first place
 #define INVALID_VALUE -1 
+#define TYPE_INTEGER 0
+#define TYPE_BOOLEAN 1
 
 // typedef 
+typedef struct SYMBOL SYMBOL;
+typedef struct ERRORSTRUCT ERRORSTRUCT;
 typedef struct PRGRM PRGRM;
 typedef struct DECLS DECLS;         // DECLS refers to struct DECLS
 typedef struct STMTSEQ STMTSEQ;
@@ -35,6 +52,7 @@ struct FACTOR;
 
 // prototype of functions
 PRGRM* generateTree();
+void printErrorList();
 void printProgramNode(PRGRM*);
 void printDeclarationsNode(DECLS*);
 void printStmtSequenceNode(STMTSEQ*);
@@ -61,12 +79,29 @@ OP4(2) -> <
 OP4(3) -> >
 OP4(4) -> <=
 OP4(5) -> >=
+
+int     -> 0
+boolean -> 1
 */
 
+//Symbol table structs
+struct SYMBOL{
+    char* identifier;
+    int varType;
+    UT_hash_handle hh;  // makes this struct hashable
+};
 
+struct ERRORSTRUCT {
+    int id;
+    char* errorMessage;
+    int lineNumber;
+    UT_hash_handle hh;
+};
+
+// Structs for each nonterminal where needed ( for example, WriteInt does not need its own struct)
 struct PRGRM{
-    DECLS * decls;
-    STMTSEQ * stmtSeq;
+    DECLS* decls;
+    STMTSEQ* stmtSeq;
 };
 
 struct DECLS {
