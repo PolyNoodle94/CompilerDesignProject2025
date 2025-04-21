@@ -2,10 +2,12 @@ program
    var SMALLER as int ;
    var BIGGER as int ;
    var TEMP as int ;
+   var TEMP as int ;
    var BJ as bool ;
 begin
    BIGGER := readInt ;
    SMALLER := readInt ;
+   BJ := readInt ;
    BIGGER := BIGGER + 1 ;
    BIGGER := BIGGER - 1 ;
    BIGGER := BIGGER * SMALLER ;

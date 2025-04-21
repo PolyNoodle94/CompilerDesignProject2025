@@ -19,9 +19,12 @@
 // essentially a NULL for non-pointer types
 // not a problem since negative values aren't valid token lexeemes in the first place
 #define INVALID_VALUE -1 
+#define TYPE_INTEGER 0
+#define TYPE_BOOLEAN 1
 
 // typedef 
 typedef struct SYMBOL SYMBOL;
+typedef struct ERRORSTRUCT ERRORSTRUCT;
 typedef struct PRGRM PRGRM;
 typedef struct DECLS DECLS;         // DECLS refers to struct DECLS
 typedef struct STMTSEQ STMTSEQ;
@@ -49,6 +52,7 @@ struct FACTOR;
 
 // prototype of functions
 PRGRM* generateTree();
+void printErrorList();
 void printProgramNode(PRGRM*);
 void printDeclarationsNode(DECLS*);
 void printStmtSequenceNode(STMTSEQ*);
@@ -80,28 +84,18 @@ int     -> 0
 boolean -> 1
 */
 
-// Enumerator
-typedef enum {
-    SYMBOL_PRGRM,
-    SYMBOL_DECLS,
-    SYMBOL_STMTSEQ,
-    SYMBOL_STMT,
-    SYMBOL_ASGNSTRUCT,
-    SYMBOL_IFSTMT,
-    SYMBOL_WHILESTMT,
-    SYMBOL_EXPR,
-    SYMBOL_SIMPEXPR,
-    SYMBOL_TERM,
-    SYMBOL_FACTOR
-} SymbolType;
-
 //Symbol table structs
 struct SYMBOL{
     char* identifier;
-    int scope;
-    SymbolType symbolType;
-    void* structPtr;
+    int varType;
     UT_hash_handle hh;  // makes this struct hashable
+};
+
+struct ERRORSTRUCT {
+    int id;
+    char* errorMessage;
+    int lineNumber;
+    UT_hash_handle hh;
 };
 
 // Structs for each nonterminal where needed ( for example, WriteInt does not need its own struct)

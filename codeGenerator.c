@@ -7,7 +7,10 @@
 
 // Declare and initialize hash table according to uthash.h standards
 SYMBOL* symbolTable = NULL;
+ERRORSTRUCT* errorList = NULL;
 int tabAmnt;
+int lineNumber;
+int errorCount;
 
 int main() {
     PRGRM* root = generateTree();
@@ -17,64 +20,120 @@ int main() {
         return 1;
     } else {
         tabAmnt = 0;
+        lineNumber = 1;
+        errorCount = 0;
         
         printProgramNode(root);
+        printf("\n");
+        printf("Total line count: %d\n", lineNumber);
+        printErrorList();
         printf("\n");
     }
 
 }
 
+// Prints a new line, then indents it appropriately
+void indentNewLine(int tabAmnt) {
+    // Prints out needed tabs
+    printf("\n");   lineNumber++;
+    for (int i = 0; i < tabAmnt; i++) {
+        printf("\t");
+    }
+}
+
+// Checks if an identifier is already inside of the symbol table
+// No need to check for scope conflicts since declarations can only be
+// done at the start of the TL13 program according to the BNF grammar
+// returns true if yes, false if no
+bool isVarInSymbolTable(char* keyPtr) {
+    SYMBOL* foundEntry;
+    HASH_FIND_STR(symbolTable, keyPtr, foundEntry);
+
+    if (foundEntry == NULL) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+SYMBOL* getVarFromSymbolTable(char* keyPtr) {
+    SYMBOL* foundEntry;
+    HASH_FIND_STR(symbolTable, keyPtr, foundEntry);
+    return foundEntry;
+}
+
+// Adds new symbol to symbol table with char* identifier as the key.
+void addVarToSymbolTable(DECLS* node) {
+    // Declare and initialize a new symbol structure
+    SYMBOL* newEntry = malloc(sizeof(SYMBOL));
+    newEntry->identifier = node->identifier;
+    newEntry->varType = node->varType;
+
+    // HASH_ADD_KEYPTR is used when the struct contains a pointer to the key, rather than the key itself
+    // In our case, we use "identifier" as the key, which is stored as a char* in the struct
+    HASH_ADD_KEYPTR(hh, symbolTable, newEntry->identifier, strlen(newEntry->identifier), newEntry);
+
+    // printf("New Entry on Symbol Table: \n");
+    // printf("Identifier: %s\n", newEntry->identifier);
+    // printf("Scope: %d\n", newEntry->scope);
+    // printf("Struct Ptr Identifier: %s\n", ((DECLS*) newEntry->structPtr)->identifier);
+}
+
+void addErrorToErrorList(int errorNum, char* errorMessage, int lineNumber) {
+    ERRORSTRUCT* newErrorEntry = malloc(sizeof(ERRORSTRUCT));
+    newErrorEntry->id = errorNum;
+    newErrorEntry->errorMessage = errorMessage;
+    newErrorEntry->lineNumber = lineNumber;
+
+    HASH_ADD_INT(errorList, id, newErrorEntry);
+}
+
+void printErrorList() {
+    ERRORSTRUCT *e, *tmp;
+    printf("error count: %d", HASH_COUNT(errorList));
+    HASH_ITER(hh, errorList, e, tmp) {
+        printf("\nError Number: %d", e->id );
+        printf("\nError Message: %s", e->errorMessage );
+        printf("\nLine Number: %d", e->lineNumber );
+        printf("\n");
+    }
+}
+
 void printProgramNode(PRGRM* node) {
-    printf("#include <stdlib.h>\n");
-    printf("#include <stdio.h>\n");
-    printf("#include <stdbool.h>\n");
+    printf("#include <stdlib.h>\n");    lineNumber++;
+    printf("#include <stdio.h>\n");     lineNumber++;
+    printf("#include <stdbool.h>\n");   lineNumber++;
+
+    lineNumber++;   // Incremented due to the '\n' at the start of the following printf
     printf("\nint main() {");
     tabAmnt++;
     printDeclarationsNode(node->decls);
     printStmtSequenceNode(node->stmtSeq);
     tabAmnt--;
-    printf("\n}");
+    printf("\n}");  lineNumber++;
 
 }
 
 void printDeclarationsNode(DECLS* node) {
     while (node != NULL) {
+        indentNewLine(tabAmnt);
 
-        printf("\n");
-        for (int i = 0; i < tabAmnt; i++) {
-            printf("\t");
+        if (isVarInSymbolTable(node->identifier)) {
+            errorCount++;
+            char* errorMessage = "(5) Each variables may only be declared once";
+            addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        } else {
+            addVarToSymbolTable(node);
         }
 
-        SYMBOL* newEntry = malloc(sizeof(SYMBOL));
-        newEntry->identifier = node->identifier;
-        newEntry->scope = INVALID_VALUE;
-        newEntry->symbolType = SYMBOL_DECLS;
-        newEntry->structPtr = node;
-
-        // HASH_ADD_KEYPTR(hh, symbolTable, newEntry->identifier, strlen(newEntry->identifier), newEntry);
-
-        // SYMBOL* foundEntry;
-        // HASH_FIND_PTR();
-
-        printf("New Entry on Symbol Table: \n");
-        printf("Identifier: %s\n", newEntry->identifier);
-        printf("Scope: %d\n", newEntry->scope);
-        printf("Symbol Type: %d\n", newEntry->symbolType);
-        printf("Struct Ptr Identifier: %s\n", ((DECLS*) newEntry->structPtr)->identifier);
-        
-        printf("%s %s;", node->varType ? "bool" : "int", node->identifier);
+        printf("%s %s = %s;", node->varType ? "bool" : "int", node->identifier, node->varType ? "false" : "0");
         node = node->decls;
     }
 }
 
 void printStmtSequenceNode(STMTSEQ* node) {
     while(node != NULL) {
-        //Puts the statement in a new line, and indents it appropriately.
-        printf("\n");
-        for (int i = 0; i < tabAmnt; i++) {
-            printf("\t");
-        }
-
+        indentNewLine(tabAmnt);
         printStmtNode(node->stmt);
         node = node->stmtSeq;
     }
@@ -94,12 +153,11 @@ void printStmtNode(STMT* node) {
         tabAmnt--;
     } else if (node->writeIntStruct != NULL) {
         //WriteInt Expression
-        printf("printf(\"");
-        printf("%%d\", ");
+        printf("printf(\"%%d\", ");
         printExprNode(node->writeIntStruct);
         printf(");");
     } else {
-        printf("ERROR!\n");
+        printf("ERROR!\n"); lineNumber++;
     }
     
 }
@@ -108,8 +166,25 @@ void printAssignNode(ASGNSTRUCT* node) {
     // Assignment:
     //      IDENTIFIER := EXPRESSION
     //      IDENTIFIER := READINT
+
+    // Check if using an undeclared variable
+    if (isVarInSymbolTable(node->identifier) == false) {
+        errorCount++;
+        char* errorMessage = "(6) Trying to assign value to undeclared variable";
+        addErrorToErrorList(errorCount, errorMessage, lineNumber);
+    }
+
     if (node->readInt != INVALID_VALUE) {
+
+        SYMBOL* leftHandVar = getVarFromSymbolTable(node->identifier);
+        if (leftHandVar->varType == TYPE_BOOLEAN) {
+            errorCount++;
+            char* errorMessage = "(8) Only integer variables may be assigned the result of readInt.";
+            addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        }
+
         printf("scanf(\"%%d\", &%s)", node->identifier);
+
     } else {
         printf("%s = ", node->identifier);
         printExprNode(node->expr);
@@ -123,26 +198,18 @@ void printIfStmtNode(IFSTMT* node) {
     printf("if ( ");
     printExprNode(node->expr);
     printf(") { ");
-    if (node->stmtSeq != NULL)      { printStmtSequenceNode(node->stmtSeq);}
+    if (node->stmtSeq != NULL) { printStmtSequenceNode(node->stmtSeq); }
 
-    //Puts the curly in a new line, and indents it appropriately.
     // Needs the -1 because the ending curly needs to be aligned with the "if"
-    printf("\n");
-    for (int i = 0; i < tabAmnt - 1; i++) {
-        printf("\t");
-    }
+    indentNewLine(tabAmnt - 1);
     printf("}");
 
     if (node->elseClause != NULL)   
     { 
         printf(" else {");
-
         printStmtSequenceNode(node->elseClause);
         
-        printf("\n");
-        for (int i = 0; i < tabAmnt - 1; i++) {
-            printf("\t");
-        }
+        indentNewLine(tabAmnt - 1);
         printf("}");
     }
 }
@@ -152,12 +219,10 @@ void printWhileStmtNode(WHILESTMT* node) {
     printf("while ( ");
     printExprNode(node->expr);
     printf(") { ");
-    if (node->stmtSeq != NULL)      { printStmtSequenceNode(node->stmtSeq);}
+    if (node->stmtSeq != NULL) { printStmtSequenceNode(node->stmtSeq); }
 
-    printf("\n");
-    for (int i = 0; i < tabAmnt - 1; i++) {
-        printf("\t");
-    }
+    // Needs the -1 because the ending curly needs to be aligned with the "while"
+    indentNewLine(tabAmnt - 1);
     printf("}");
 }
 

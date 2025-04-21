@@ -1,0 +1,44 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+int main() {
+        int SMALLER = 0;
+        int BIGGER = 0;
+        int TEMP = 0;
+        int TEMP = 0;
+        bool BJ = false;
+        scanf("%d", &BIGGER);
+        scanf("%d", &SMALLER);
+        scanf("%d", &BJ);
+        BIGGER = BIGGER + 1 ;
+        BIGGER = BIGGER - 1 ;
+        BIGGER = BIGGER * SMALLER ;
+        BIGGER = BIGGER / SMALLER ;
+        BIGGER = BIGGER % SMALLER ;
+        if ( ( SMALLER > BIGGER + ( 3 + 2 ) ) == true ) {
+                TEMP = SMALLER ;
+                TEMP1 = 23012 ;
+                SMALLER = BIGGER ;
+                BIGGER = TEMP ;
+                if ( 3 > 4 ) {
+                        TEMP = 4 ;
+                } else {
+                        TEMP = 3 ;
+                }
+        } else {
+                TEMP = BIGGER ;
+                TEMP1 = 314159 ;
+        }
+        while ( SMALLER > 0 ) {
+                BIGGER = BIGGER * SMALLER ;
+                BJ = true ;
+                BJ = true ;
+                if ( ( SMALLER > BIGGER ) > 3 ) {
+                        TEMP = SMALLER ;
+                        SMALLER = BIGGER ;
+                        BIGGER = TEMP ;
+                }
+        }
+        printf("%d", BIGGER );
+}
