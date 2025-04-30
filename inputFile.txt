@@ -9,16 +9,17 @@ begin
    SMALLER := readInt ;
    BJ := readInt ;
    BIGGER := BIGGER + 1 ;
-   BIGGER := BIGGER - 1 ;
+   BIGGER := (BIGGER - 1) > 4 ;
    BIGGER := BIGGER * SMALLER ;
-   BIGGER := BIGGER div SMALLER ;
+   BIGGER := BIGGER div true ;
+   BJ := 4 ;
    BIGGER := BIGGER mod SMALLER ;
    if ( SMALLER > BIGGER + ( 3 + 2 ) ) = true then
       TEMP := SMALLER ;
       TEMP1 := 23012 ;
       SMALLER := BIGGER ;
       BIGGER := TEMP ;
-      if 3 > 4 then
+      if 3 + 4 then
          TEMP := 4 ;
       else
          TEMP := 3 ;
@@ -26,6 +27,10 @@ begin
    else
       TEMP := BIGGER ;
       TEMP1 := 314159 ;
+   end ;
+
+   while SMALLER + 1 do
+      TEMP := 3 ;
    end ;
 
    while SMALLER > 0 do
@@ -41,5 +46,6 @@ begin
       end ;
    end ;
    writeInt BIGGER ;
+   writeInt (BIGGER > 4) ;
 end
 
