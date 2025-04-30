@@ -41,6 +41,8 @@ void indentNewLine(int tabAmnt) {
     }
 }
 
+// ####################### HASH TABLE METHODS START ####################
+
 // Checks if an identifier is already inside of the symbol table
 // No need to check for scope conflicts since declarations can only be
 // done at the start of the TL13 program according to the BNF grammar
@@ -99,6 +101,109 @@ void printErrorList() {
     }
 }
 
+// ####################### HASH TABLE METHODS END ####################
+
+// ####################### AUXILIARY METHDOS START ###################
+
+// Check if a nested expression is an integer
+bool isNestedExpressionsAnInteger(EXPR* expression) {
+    // Dive into the right-most parantheses
+    SIMPEXPR* simpleExpression = (expression->simpleExpr2 != NULL) ? expression->simpleExpr2 : expression->simpleExpr1;
+
+    TERM* term = (simpleExpression->term2 != NULL) ? simpleExpression->term2 : simpleExpression->term1;
+
+    FACTOR* factor = (term->factor2 != NULL) ? term->factor2 : term->factor1;
+
+    if (factor->expr != NULL) {
+        isNestedExpressionsAnInteger(factor->expr);
+    }
+
+    return isExpressionAnInteger(expression);
+}
+
+// EXPR* uses OP4 operators (boolean operators)
+bool isExpressionAnInteger(EXPR* expression) {
+    // if expression is 
+    if (expression->simpleExpr2 != NULL) {
+        if (isSimpleExpressionAnInteger(expression->simpleExpr1) && isSimpleExpressionAnInteger(expression->simpleExpr2)) {
+            return true;
+        }
+        errorCount++;
+        char* errorMessage = "(1) OP4 Arguments must be integers";
+        addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        return false;
+    }
+
+    if (isSimpleExpressionAnInteger(expression->simpleExpr1)) {
+        return true;
+    } 
+    return false;
+
+}
+
+bool isSimpleExpressionAnInteger(SIMPEXPR* simpleExpression) {
+    // if simpleExpression is an operation between two terms
+    if (simpleExpression->term2 != NULL) {
+        // if both terms are integers
+        if (isTermAnInteger(simpleExpression->term1) && isTermAnInteger(simpleExpression->term2)) {
+            return true;
+        }
+        // ERROR: OP3 arguments must be integers
+        errorCount++;
+        char* errorMessage = "(1) OP3 Arguments must be integers";
+        addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        return false;
+    }
+
+    // if simpleExpression is a single term
+    if (isTermAnInteger(simpleExpression->term1)) {
+        return true;
+    }
+    return false;
+}
+
+bool isTermAnInteger(TERM* term) {
+    // if term is an operation between two factors
+    if (term->factor2 != NULL) {
+        // if both factors are integers
+        if (isFactorAnInteger(term->factor1) && isFactorAnInteger(term->factor2)) {
+            return true;
+        }
+        // error if a factor is not an integer in an OP2 operation
+        errorCount++;
+        char* errorMessage = "(1) OP2 Arguments must be integers";
+        addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        return false;
+    } 
+    
+    // if term is a single factor
+    if (isFactorAnInteger(term->factor1)) {
+        return true;
+    }
+    return false;
+
+}
+
+bool isFactorAnInteger(FACTOR* factor) { 
+    if (factor->num != INVALID_VALUE) {
+        // if factor is a num, return true
+        return true;
+    }
+    else if (factor->identifier != NULL) {
+        // if factor is an identifier and not an integer, return false. otherwise, return true
+        SYMBOL* fetchedSymbol = getVarFromSymbolTable(factor->identifier);
+        if (fetchedSymbol->varType != TYPE_INTEGER) {
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+// ####################### AUXILIARY METHDOS END #####################
+
+// ####################### PRINTING METHODS START ####################
+
 void printProgramNode(PRGRM* node) {
     printf("#include <stdlib.h>\n");    lineNumber++;
     printf("#include <stdio.h>\n");     lineNumber++;
@@ -152,7 +257,13 @@ void printStmtNode(STMT* node) {
         printWhileStmtNode(node->whileStmt);
         tabAmnt--;
     } else if (node->writeIntStruct != NULL) {
-        //WriteInt Expression
+        // WriteInt Expression
+        // WriteInt expression must resolve to an integer
+        if (isNestedExpressionsAnInteger(node->writeIntStruct) == false) {
+            errorCount++;
+            char* errorMessage = "(9) writeInt's expression must evaluate to an integer.";
+            addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        }
         printf("printf(\"%%d\", ");
         printExprNode(node->writeIntStruct);
         printf(");");
@@ -172,11 +283,15 @@ void printAssignNode(ASGNSTRUCT* node) {
         errorCount++;
         char* errorMessage = "(6) Trying to assign value to undeclared variable";
         addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        printf("%s = ", node->identifier);
+        printExprNode(node->expr);
+        printf(";");
+        return;
     }
 
+    SYMBOL* leftHandVar = getVarFromSymbolTable(node->identifier);
     if (node->readInt != INVALID_VALUE) {
 
-        SYMBOL* leftHandVar = getVarFromSymbolTable(node->identifier);
         if (leftHandVar->varType == TYPE_BOOLEAN) {
             errorCount++;
             char* errorMessage = "(8) Only integer variables may be assigned the result of readInt.";
@@ -186,6 +301,19 @@ void printAssignNode(ASGNSTRUCT* node) {
         printf("scanf(\"%%d\", &%s)", node->identifier);
 
     } else {
+        // check if identifier is integer but expression is not
+        if (leftHandVar->varType == TYPE_INTEGER && isNestedExpressionsAnInteger(node->expr) == false) {
+            errorCount++;
+            char* errorMessage = "(6) Variables of Type INT must be assgined integer values";
+            addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        }
+
+        // check if identifier is boolean but expression is not
+        if (leftHandVar->varType == TYPE_BOOLEAN && isNestedExpressionsAnInteger(node->expr) == true) {
+            errorCount++;
+            char* errorMessage = "(6) Variables of Type BOOL must be assgined boolean values";
+            addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        }
         printf("%s = ", node->identifier);
         printExprNode(node->expr);
     }
@@ -196,6 +324,11 @@ void printIfStmtNode(IFSTMT* node) {
     // if statement:
     // IF <expression> THEN <statementSequence> <elseClause> END
     printf("if ( ");
+    if (isNestedExpressionsAnInteger(node->expr) == true) {
+        errorCount++;
+        char* errorMessage = "(10) The expression guarding if-statements and while-loops must be boolean.";
+        addErrorToErrorList(errorCount, errorMessage, lineNumber);
+    }
     printExprNode(node->expr);
     printf(") { ");
     if (node->stmtSeq != NULL) { printStmtSequenceNode(node->stmtSeq); }
@@ -217,6 +350,11 @@ void printIfStmtNode(IFSTMT* node) {
 void printWhileStmtNode(WHILESTMT* node) {
     // WHILE <expression> DO <statementSequence> END
     printf("while ( ");
+    if (isNestedExpressionsAnInteger(node->expr) == true) {
+        errorCount++;
+        char* errorMessage = "(10) The expression guarding if-statements and while-loops must be boolean.";
+        addErrorToErrorList(errorCount, errorMessage, lineNumber);
+    }
     printExprNode(node->expr);
     printf(") { ");
     if (node->stmtSeq != NULL) { printStmtSequenceNode(node->stmtSeq); }
@@ -283,3 +421,5 @@ void printFactorNode(FACTOR* node) {
         printf(") ");
     }
 }
+
+// ####################### PRINTING METHODS END ####################

@@ -64,6 +64,10 @@ void printExprNode(EXPR*);
 void printSimpleExprNode(SIMPEXPR*);
 void printTermNode(TERM*);
 void printFactorNode(FACTOR*);
+bool isExpressionAnInteger(EXPR*);
+bool isSimpleExpressionAnInteger(SIMPEXPR*);
+bool isTermAnInteger(TERM*);
+bool isFactorAnInteger(FACTOR*);
 
 /*
 OP2(0) -> *

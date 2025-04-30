@@ -1,0 +1,111 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+int main() {
+	int SMALLER = 0;
+	int BIGGER = 0;
+	int TEMP = 0;
+	int TEMP = 0;
+	bool BJ = false;
+	scanf("%d", &BIGGER); 
+	scanf("%d", &SMALLER); 
+	scanf("%d", &BJ); 
+	BIGGER = BIGGER + 1 ; 
+	BIGGER = ( BIGGER - 1 ) > 4 ; 
+	BIGGER = BIGGER * SMALLER ; 
+	BIGGER = BIGGER / true ; 
+	BJ = 4 ; 
+	BIGGER = BIGGER % SMALLER ; 
+	if ( ( SMALLER > BIGGER + ( 3 + 2 ) ) == true ) { 
+		TEMP = SMALLER ; 
+		TEMP1 = 23012 ;
+		SMALLER = BIGGER ; 
+		BIGGER = TEMP ; 
+		if ( 3 + 4 ) { 
+			TEMP = 4 ; 
+		} else {
+			TEMP = 3 ; 
+		}
+	} else {
+		TEMP = BIGGER ; 
+		TEMP1 = 314159 ;
+	}
+	while ( SMALLER + 1 ) { 
+		TEMP = 3 ; 
+	}
+	while ( SMALLER > 0 ) { 
+		BIGGER = BIGGER * SMALLER ; 
+		BJ = true ; 
+		BJ = true ; 
+		if ( ( SMALLER > BIGGER ) > 3 ) { 
+			TEMP = SMALLER ; 
+			SMALLER = BIGGER ; 
+			BIGGER = TEMP ; 
+		}
+	}
+	printf("%d", BIGGER );
+	printf("%d", ( BIGGER > 4 ) );
+}
+Total line count: 49
+error count: 15
+Error Number: 1
+Error Message: (5) Each variables may only be declared once
+Line Number: 9
+
+Error Number: 2
+Error Message: (8) Only integer variables may be assigned the result of readInt.
+Line Number: 13
+
+Error Number: 3
+Error Message: (1) OP4 Arguments must be integers
+Line Number: 15
+
+Error Number: 4
+Error Message: (6) Variables of Type INT must be assgined integer values
+Line Number: 15
+
+Error Number: 5
+Error Message: (1) OP2 Arguments must be integers
+Line Number: 17
+
+Error Number: 6
+Error Message: (6) Variables of Type INT must be assgined integer values
+Line Number: 17
+
+Error Number: 7
+Error Message: (6) Variables of Type BOOL must be assgined boolean values
+Line Number: 18
+
+Error Number: 8
+Error Message: (1) OP4 Arguments must be integers
+Line Number: 20
+
+Error Number: 9
+Error Message: (6) Trying to assign value to undeclared variable
+Line Number: 22
+
+Error Number: 10
+Error Message: (10) The expression guarding if-statements and while-loops must be boolean.
+Line Number: 25
+
+Error Number: 11
+Error Message: (6) Trying to assign value to undeclared variable
+Line Number: 32
+
+Error Number: 12
+Error Message: (10) The expression guarding if-statements and while-loops must be boolean.
+Line Number: 34
+
+Error Number: 13
+Error Message: (10) The expression guarding if-statements and while-loops must be boolean.
+Line Number: 37
+
+Error Number: 14
+Error Message: (1) OP4 Arguments must be integers
+Line Number: 41
+
+Error Number: 15
+Error Message: (9) writeInt's expression must evaluate to an integer.
+Line Number: 48
+

@@ -14,7 +14,8 @@ int main() {
         BIGGER = BIGGER + 1 ;
         BIGGER = BIGGER - 1 ;
         BIGGER = BIGGER * SMALLER ;
-        BIGGER = BIGGER / SMALLER ;
+        BIGGER = BIGGER / true ;
+        BJ = 4 ;
         BIGGER = BIGGER % SMALLER ;
         if ( ( SMALLER > BIGGER + ( 3 + 2 ) ) == true ) {
                 TEMP = SMALLER ;
