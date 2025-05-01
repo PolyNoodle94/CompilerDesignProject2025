@@ -14,7 +14,7 @@ begin
    BIGGER := BIGGER div true ;
    BJ := 4 ;
    BIGGER := BIGGER mod SMALLER ;
-   if ( SMALLER > BIGGER + ( 3 + 2 ) ) = true then
+   if ( ((( SMALLER > true ) + 4 ) * 2 ) > BIGGER ) = true then
       TEMP := SMALLER ;
       TEMP1 := 23012 ;
       SMALLER := BIGGER ;

@@ -8,37 +8,33 @@
 // Declare and initialize hash table according to uthash.h standards
 SYMBOL* symbolTable = NULL;
 ERRORSTRUCT* errorList = NULL;
-int tabAmnt;
-int lineNumber;
-int errorCount;
+
+
+int tabAmnt;    // used to indent printed C code
+int lineNumber; // keeps track of what line an error occurs in
+int errorCount; // keeps track of the current number of errors
 
 int main() {
+    // Basically a wrapper call for yyparse() in the tokenParser.y bison file
     PRGRM* root = generateTree();
 
     if (root == NULL) {
         printf("Error generating tree. Exiting program");
         return 1;
     } else {
-        tabAmnt = 0;
-        lineNumber = 1;
-        errorCount = 0;
+        tabAmnt = 0;    // indentation starts at 0 tabs
+        lineNumber = 1; // starting on line 1, incremented after every '\n' character
+        errorCount = 0; // initialized to zero errors
         
         printProgramNode(root);
-        printf("\n");
+
+        // the following is not part of the translated TL13 program
+        printf("\n\n\n");
         printf("Total line count: %d\n", lineNumber);
-        printErrorList();
+        printErrorList();   // for each error, prints the number, message and line it occured ons
         printf("\n");
     }
 
-}
-
-// Prints a new line, then indents it appropriately
-void indentNewLine(int tabAmnt) {
-    // Prints out needed tabs
-    printf("\n");   lineNumber++;
-    for (int i = 0; i < tabAmnt; i++) {
-        printf("\t");
-    }
 }
 
 // ####################### HASH TABLE METHODS START ####################
@@ -49,24 +45,25 @@ void indentNewLine(int tabAmnt) {
 // returns true if yes, false if no
 bool isVarInSymbolTable(char* keyPtr) {
     SYMBOL* foundEntry;
-    HASH_FIND_STR(symbolTable, keyPtr, foundEntry);
+    HASH_FIND_STR(symbolTable, keyPtr, foundEntry); // store symbolTable(keyPtr) inside foundEntry
 
     if (foundEntry == NULL) {
-        return false;
+        return false;   // if NULL, identifier was not in symbol table
     } else {
-        return true;
+        return true;    // if not NULL, identifier was in symbol table
     }
 }
 
+// returns SYMBOL* found at symbolTable(keyPtr)
 SYMBOL* getVarFromSymbolTable(char* keyPtr) {
     SYMBOL* foundEntry;
-    HASH_FIND_STR(symbolTable, keyPtr, foundEntry);
+    HASH_FIND_STR(symbolTable, keyPtr, foundEntry); // has no return value, instead returns the found entry in foundEntry
     return foundEntry;
 }
 
 // Adds new symbol to symbol table with char* identifier as the key.
 void addVarToSymbolTable(DECLS* node) {
-    // Declare and initialize a new symbol structure
+    // Declare and initialize a new symbol structure ptr
     SYMBOL* newEntry = malloc(sizeof(SYMBOL));
     newEntry->identifier = node->identifier;
     newEntry->varType = node->varType;
@@ -74,22 +71,21 @@ void addVarToSymbolTable(DECLS* node) {
     // HASH_ADD_KEYPTR is used when the struct contains a pointer to the key, rather than the key itself
     // In our case, we use "identifier" as the key, which is stored as a char* in the struct
     HASH_ADD_KEYPTR(hh, symbolTable, newEntry->identifier, strlen(newEntry->identifier), newEntry);
-
-    // printf("New Entry on Symbol Table: \n");
-    // printf("Identifier: %s\n", newEntry->identifier);
-    // printf("Scope: %d\n", newEntry->scope);
-    // printf("Struct Ptr Identifier: %s\n", ((DECLS*) newEntry->structPtr)->identifier);
 }
 
+// adds an ERRORSTRUCT* to the errorList hash table
 void addErrorToErrorList(int errorNum, char* errorMessage, int lineNumber) {
+    // Declare and initialize a new ERRORSTRUCT* structure ptr
     ERRORSTRUCT* newErrorEntry = malloc(sizeof(ERRORSTRUCT));
     newErrorEntry->id = errorNum;
     newErrorEntry->errorMessage = errorMessage;
     newErrorEntry->lineNumber = lineNumber;
 
+    // current number of errors is used as the hash key for an entry in the errorList hash table
     HASH_ADD_INT(errorList, id, newErrorEntry);
 }
 
+// Iterates through all entries inside the errorList hash table and prints them out
 void printErrorList() {
     ERRORSTRUCT *e, *tmp;
     printf("error count: %d", HASH_COUNT(errorList));
@@ -114,6 +110,7 @@ bool isNestedExpressionsAnInteger(EXPR* expression) {
 
     FACTOR* factor = (term->factor2 != NULL) ? term->factor2 : term->factor1;
 
+    // if nested expressions, recurse
     if (factor->expr != NULL) {
         isNestedExpressionsAnInteger(factor->expr);
     }
@@ -203,6 +200,15 @@ bool isFactorAnInteger(FACTOR* factor) {
 // ####################### AUXILIARY METHDOS END #####################
 
 // ####################### PRINTING METHODS START ####################
+
+// Prints a new line, then indents it appropriately
+void indentNewLine(int tabAmnt) {
+    // Prints out needed tabs
+    printf("\n");   lineNumber++;
+    for (int i = 0; i < tabAmnt; i++) {
+        printf("\t");
+    }
+}
 
 void printProgramNode(PRGRM* node) {
     printf("#include <stdlib.h>\n");    lineNumber++;

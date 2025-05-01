@@ -17,7 +17,7 @@ int main() {
 	BIGGER = BIGGER / true ; 
 	BJ = 4 ; 
 	BIGGER = BIGGER % SMALLER ; 
-	if ( ( SMALLER > BIGGER + ( 3 + 2 ) ) == true ) { 
+	if ( ( ( ( ( SMALLER > true ) + 4 ) * 2 ) > BIGGER ) == true ) { 
 		TEMP = SMALLER ; 
 		TEMP1 = 23012 ;
 		SMALLER = BIGGER ; 
@@ -47,6 +47,8 @@ int main() {
 	printf("%d", BIGGER );
 	printf("%d", ( BIGGER > 4 ) );
 }
+
+
 Total line count: 49
 error count: 15
 Error Number: 1
