@@ -21,9 +21,9 @@ int main() {
         return 1;
     }
 
-    int run_result = system("./codeGenerator < inputFile.txt > outputFile.txt");
+    int run_result = system("./codeGenerator < inputFile.txt");
     if (run_result != 0) {
-        printf("\nError running <./codeGenerator < inputFile.txt > outputFile.txt>\n");
+        printf("\nError running <./codeGenerator < inputFile.txt\n");
         return 1;
     }
 

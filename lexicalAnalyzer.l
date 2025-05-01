@@ -15,17 +15,14 @@
 %}
 
 WS          [ \t\n]+
-NUM         ([1-9][0-9]*|0)
-
-/* a number is illegal if it falls outside the range 0-2147483647*/
-ILLEGALNUM  ([2-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][8-9][0-9]*|-[0-9]+)
+NUM         (-?[1-9][0-9]*|0)
 
 IDENT       [A-Z][A-Z0-9]*
 
 
 %%
 
-{WS}    {}
+{WS}    {}  
 %[^\n]* {}
 
 writeInt    { return(WRITEINT); }
@@ -43,8 +40,6 @@ var     { return(VAR);  }
 as      { return(AS);   }
 int     { return(INT);  }
 bool    { return(BOOL); }
-
-{ILLEGALNUM}    {printf("Illegal number detected: %s\nExiting Program", yytext); exit(EXIT_FAILURE);}
 
 {NUM}   { 
     yylval.iValue = atoi(yytext);
@@ -78,6 +73,7 @@ mod { yylval.op2val = 2; return(OP2); }
 \)  { return(RP); }
 :=  { return(ASGN); }
 ;   { return(SC); }
+
 
 
 %%

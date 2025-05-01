@@ -13,6 +13,8 @@ begin
    BIGGER := BIGGER * SMALLER ;
    BIGGER := BIGGER div true ;
    BJ := 4 ;
+   BIGGER := -1 ;
+   BIGGER := 2147483648 ;
    BIGGER := BIGGER mod SMALLER ;
    if ( ((( SMALLER > true ) + 4 ) * 2 ) > BIGGER ) = true then
       TEMP := SMALLER ;

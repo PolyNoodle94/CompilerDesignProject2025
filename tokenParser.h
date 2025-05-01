@@ -18,7 +18,7 @@
 
 // essentially a NULL for non-pointer types
 // not a problem since negative values aren't valid token lexeemes in the first place
-#define INVALID_VALUE -1 
+#define INVALID_VALUE -941020393    // SUPER SCUFFED WILL NEED TO CHANGE TO CATCH THIS DURING LEXICAL
 #define TYPE_INTEGER 0
 #define TYPE_BOOLEAN 1
 

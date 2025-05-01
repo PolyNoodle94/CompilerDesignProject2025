@@ -418,6 +418,13 @@ void printFactorNode(FACTOR* node) {
     if (node->identifier != NULL) {
         printf("%s ", node->identifier);
     } else if (node->num != INVALID_VALUE) {
+
+        if (node->num < 0 || node->num > 2147483647) {
+            errorCount++;
+            char* errorMessage = "(12) An integer outside of the range 0 < 2147483647 is invalid";
+            addErrorToErrorList(errorCount, errorMessage, lineNumber);
+        }
+
         printf("%d ", node->num);
     } else if (node->boolLit != INVALID_VALUE) {
         printf("%s ", node->boolLit ? "true" : "false");
